@@ -59,19 +59,21 @@ typedef struct { float roll, pitch, yaw; } Euler_t;        /* units in radians, 
 **Hamilton Product**
 
 $$
-\begin{aligned} w &= w_1 w_2 - x_1 x_2 - y_1 y_2 - z_1 z_2 \\ x &= w_1 x_2 + x_1 w_2 + y_1 z_2 - z_1 y_2 \\ y &= w_1 y_2 - x_1 z_2 + y_1 w_2 + z_1 x_2 \\ z &= w_1 z_2 + x_1 y_2 - y_1 x_2 + z_1 w_2 \end{aligned}
+\begin{aligned}  w &= w_1 w_2 - x_1 x_2 - y_1 y_2 - z_1 z_2 \\  x &= w_1 x_2 + x_1 w_2 + y_1 z_2 - z_1 y_2 \\  y &= w_1 y_2 - x_1 z_2 + y_1 w_2 + z_1 x_2 \\  z &= w_1 z_2 + x_1 y_2 - y_1 x_2 + z_1 w_2  \end{aligned}
 $$
 
 **Quaternion → Euler (ZYX, aerospace convention)**
 
 $$
-\begin{aligned} \text{roll } \phi &= \operatorname{atan2}(2(w \cdot x + y \cdot z), w^2 - x^2 - y^2 + z^2) \\ \text{pitch } \theta &= \operatorname{asin}(2(w \cdot y - z \cdot x)) \quad \text{// clamped to } \pm \pi/2 \text{ when } \vert{}\sin\theta\vert{} \ge 1 \\ \text{yaw } \psi &= \operatorname{atan2}(2(w \cdot z + x \cdot y), w^2 + x^2 - y^2 - z^2) \end{aligned}
+\begin{aligned}  \text{roll } \phi &= \text{atan2}(2(w \cdot x + y \cdot z), w^2 - x^2 - y^2 + z^2) \\  \text{pitch } \theta &= \text{asin}(2(w \cdot y - z \cdot x)) \\  \text{yaw } \psi &= \text{atan2}(2(w \cdot z + x \cdot y), w^2 + x^2 - y^2 - z^2)  \end{aligned}
 $$
+
+*(Note: pitch* $\theta$ *is clamped to* $\pm \pi/2$ *when* $\vert{}\sin\theta\vert{} \ge 1$*)*
 
 **Vector Rotation (Rodrigues' form)**
 
 $$
-\begin{aligned} \vec{t} &= 2 \cdot (\vec{q}_{\text{vec}} \times \vec{v}_{\text{in}}) \\ \vec{v}_{\text{out}} &= \vec{v}_{\text{in}} + w \cdot \vec{t} + (\vec{q}_{\text{vec}} \times \vec{t}) \end{aligned}
+\begin{aligned}  \mathbf{t} &= 2 \cdot (\mathbf{q}_{\text{vec}} \times \mathbf{v}_{\text{in}}) \\  \mathbf{v}_{\text{out}} &= \mathbf{v}_{\text{in}} + w \cdot \mathbf{t} + (\mathbf{q}_{\text{vec}} \times \mathbf{t})  \end{aligned}
 $$
 
 ### 3.4 Division-by-Zero Protection
