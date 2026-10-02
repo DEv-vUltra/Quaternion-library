@@ -14,12 +14,12 @@
 extern "C" {
 #endif
 
-#include <stdio.h>
+#include <stddef.h>
 #include <math.h>
 #include <assert.h>
 
-static const float QUAT_EPS = 1e-6f; /* near zero guard */
-static const float HALF_PI  = 1.570793f; /* pi/2 for glimbal lock */
+#define QUAT_EPS = 1e-6f; /* near zero guard */
+#define HALF_PI  = 1.5707964f; /* pi/2 for glimbal lock */
 
 /**
  * Quaternion Library
@@ -104,7 +104,7 @@ static inline float Quat_NormSq(Quaternion_t q){
  * Formula: q = w - x * i - y * j - z * k
  *
  */
-static inline Quaternion_t Conjugation(Quaternion_t q){
+static inline Quaternion_t Quat_Conjugate(Quaternion_t q){
     return Quat_Create(q.w, -q.x, -q.y, -q.z);
 }
 
@@ -147,14 +147,14 @@ void Quat_Reciprocal(const Quaternion_t *q, Quaternion_t *res);
  * @brief  Convert a unit quaternion to ZYX Euler angles (roll-pitch-yaw).
  *
  * Convention (aerospace / ZYX intrinsic):
- *   roll  φ = atan2( 2(wy + xz),  w²−x²−y²+z² )
+ *   roll  φ = atan2( 2(wx + yz),  w²−x²−y²+z² )
  *   pitch θ = arcsin( 2(wy − zx) )   [clamped for gimbal lock]
  *   yaw   ψ = atan2( 2(wz + xy),  w²+x²−y²−z² )
  *
  * @param  q      Unit quaternion (non-NULL).
  * @param  angle  Output Euler angles in radians (non-NULL).
  */
-void Quat_ToEuler(Quaternion_t *q, Euler_t *angle);
+void Quat_ToEuler(const Quaternion_t *q, Euler_t *angle);
 
 /**
  * @brief  Rotate a 3-D vector by a unit quaternion:

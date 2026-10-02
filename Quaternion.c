@@ -7,7 +7,7 @@
 
 #include "Quaternion.h"
 /**
- * @brief  Fast inverse square-root guard: return 1/x or 0 if x < EPS.
+ * @brief  return 1/x or 0 if x < EPS.
  *         Centralizes the division-by-near-zero protection.
  */
 static float save_inv(float x){
@@ -69,7 +69,7 @@ void Quat_Reciprocal(const Quaternion_t *q, Quaternion_t *res){
  * Quat_ToEuler
  */
 
-void Quat_ToEuler(Quaternion_t *q, Euler_t *angle){
+void Quat_ToEuler(const Quaternion_t *q, Euler_t *angle){
     assert(q     != NULL);
     assert(angle != NULL);
 

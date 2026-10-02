@@ -29,6 +29,11 @@ int main() {
 
     // Chạy kiểm thử toàn bộ luồng thuật toán với dữ liệu biến thiên
     Quat_Normalize(&q1);
+    Quat_Normalize(&q2);
+    Quat_Conjugate(q1);
+    Quat_Conjugate(q2);
+    Quat_Reciprocal(&q1, &res);
+    Quat_Reciprocal(&q2, &res);
     Quat_Multiply(&q1, &q2, &res);
     Quat_ToEuler(&res, &angle);
     Quat_RotateVector(&q1, v_in, v_out);
