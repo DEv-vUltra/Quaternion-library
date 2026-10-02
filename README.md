@@ -29,7 +29,7 @@ typedef struct { float roll, pitch, yaw; } Euler_t;        /* units in radians, 
 | Constant | Value | Meaning | 
  | ----- | ----- | ----- | 
 | `QUAT_EPS` | `1e-6f` | Threshold for protection against division by near-zero values | 
-| `HALF_PI` | `1.570793f` | $\pi/2$, used when pitch encounters gimbal lock ($\pm 90^\circ$) | 
+| `HALF_PI` | `1.5707964f` | $\pi/2$, used when pitch encounters gimbal lock ($\pm 90^\circ$) | 
 
 ## 3. API
 
@@ -42,7 +42,7 @@ typedef struct { float roll, pitch, yaw; } Euler_t;        /* units in radians, 
 | `Quat_Add(q1, q2)` | Component-wise addition | 
 | `Quat_Scale(q, s)` | Scalar multiplication $s \cdot q$ | 
 | `Quat_NormSq(q)` | Squared norm: $w^2 + x^2 + y^2 + z^2$ | 
-| `Conjugation(q)` | Conjugate quaternion: $w - xi - yj - zk$ | 
+| `Quat_Conjugate(q)` | Conjugate quaternion: $w - xi - yj - zk$ | 
 
 ### 3.2 Functions in `Quaternion.c`
 
@@ -195,20 +195,6 @@ Compare against reference implementations (NumPy / `scipy.spatial.transform.Rota
 
 Run on STM32F407 with real IMU data, comparing against PC results to detect discrepancies caused by single-precision FPU hardware implementation.
 
-## 7. Review Notes (Discovered During Code Inspection)
-
-| \# | Location | Issue | Proposal | 
- | ----- | ----- | ----- | ----- | 
-| 1 | `Quaternion.h`, doc of `Quat_ToEuler` | Roll formula documented as $2(wy + xz)$, but code uses $2(wx + yz)$ | Update documentation to match code | 
-| 2 | `HALF_PI = 1.570793f` | Exact $\pi/2$ is `1.5707964f`; current value differs by $\sim 3 \times 10^{-7}\text{ rad}$ (and is truncated further as float) | Use `1.5707964f` | 
-| 3 | Doc of `Quat_Reciprocal` | Documents precondition $\Vert{}q\Vert{} > \text{QUAT\_EPS}$, but code checks $\Vert{}q\Vert{}^2 > \text{QUAT\_EPS}$ (i.e. $\Vert{}q\Vert{} > 10^{-3}$) and returns zero quaternion if unmet | Align threshold and clearly state behavior upon degeneracy | 
-| 4 | Comment in `save_inv` | Says "Fast inverse square-root", but the function is just protected inversion | Fix comment | 
-| 5 | `Quat_ToEuler` | Parameter `q` is not `const`, even though the function does not modify `q` | Change to `const Quaternion_t *q` | 
-| 6 | `Conjugation` | Lacks `Quat_` prefix unlike other functions | Rename to `Quat_Conjugate` | 
-| 7 | `Quat_Normalize` | Does not notify caller when skipped due to an excessively small norm | Consider returning a status code | 
-| 8 | `Quaternion.h` | Unnecessary inclusion of `<stdio.h>`; `NULL` should come from `<stddef.h>` | Remove `<stdio.h>`, add `<stddef.h>` | 
-| 9 | `static const float` in header | Each translation unit gets a private copy; MISRA typically prefers `#define` or `enum` for constants | Consider changing | 
-| 10 | `main.c` | Does not call `Quat_Reciprocal` and `Conjugation`; `q2` is not normalized before multiplication | Add to test suite | 
 
 ## 8. Review Results Table
 
